@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/quiet_copy.dart';
 import '../../core/theme.dart';
 import '../../data/models/meeting.dart';
 import 'widgets/brief_section.dart';
@@ -50,14 +51,14 @@ class DashboardScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          'Every meeting deserves\na second memory.',
+                          QuietCopy.footer,
                           style: theme.textTheme.bodyMedium,
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 8),
                         TextButton(
                           onPressed: onNewRecording,
-                          child: const Text('New recording'),
+                          child: const Text(QuietCopy.newRecordingAction),
                         ),
                       ],
                     ),
