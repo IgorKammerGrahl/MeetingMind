@@ -18,6 +18,7 @@ type Repository interface {
 	Create(ctx context.Context, m *models.Meeting) error
 	Get(ctx context.Context, id uuid.UUID) (*models.Meeting, error)
 	Update(ctx context.Context, m *models.Meeting) error
+	List(ctx context.Context) ([]models.Meeting, error)
 }
 
 type MeetingRepository struct {
@@ -46,4 +47,11 @@ func (r *MeetingRepository) Get(ctx context.Context, id uuid.UUID) (*models.Meet
 
 func (r *MeetingRepository) Update(ctx context.Context, m *models.Meeting) error {
 	return r.db.WithContext(ctx).Save(m).Error
+}
+
+// List returns all meetings, newest first.
+func (r *MeetingRepository) List(ctx context.Context) ([]models.Meeting, error) {
+	var ms []models.Meeting
+	err := r.db.WithContext(ctx).Order("created_at DESC").Find(&ms).Error
+	return ms, err
 }

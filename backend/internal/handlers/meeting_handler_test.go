@@ -30,6 +30,13 @@ func (r *memRepo) Get(_ context.Context, id uuid.UUID) (*models.Meeting, error) 
 	return nil, gormNotFound
 }
 func (r *memRepo) Update(_ context.Context, m *models.Meeting) error { r.m[m.ID] = m; return nil }
+func (r *memRepo) List(_ context.Context) ([]models.Meeting, error) {
+	out := make([]models.Meeting, 0, len(r.m))
+	for _, m := range r.m {
+		out = append(out, *m)
+	}
+	return out, nil
+}
 
 type nopStore struct{}
 

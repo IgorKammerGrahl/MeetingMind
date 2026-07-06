@@ -23,3 +23,7 @@ mobile/ios/Pods/
 .vscode/
 .idea/
 .superpowers/
+
+# Tooling caches
+.codegraph/
+.serena/

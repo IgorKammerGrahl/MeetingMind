@@ -5,7 +5,12 @@ enum RecordingPhase { idle, recording, paused, stopped }
 class RecordingState {
   final RecordingPhase phase;
   final String? path;
-  const RecordingState({this.phase = RecordingPhase.idle, this.path});
+  final bool permissionDenied;
+  const RecordingState({
+    this.phase = RecordingPhase.idle,
+    this.path,
+    this.permissionDenied = false,
+  });
 }
 
 /// Abstraction over the platform audio recorder, so the controller is testable.
@@ -15,6 +20,9 @@ abstract class RecorderPort {
   Future<void> pause();
   Future<void> resume();
   Future<String?> stop();
+
+  /// Input level while recording, normalized 0..1.
+  Stream<double> amplitude(Duration interval);
 }
 
 class RecordingController extends StateNotifier<RecordingState> {
@@ -25,11 +33,18 @@ class RecordingController extends StateNotifier<RecordingState> {
       : super(const RecordingState());
 
   Future<void> startRecording() async {
-    if (!await _recorder.hasPermission()) return;
+    if (!await _recorder.hasPermission()) {
+      state = RecordingState(phase: state.phase, permissionDenied: true);
+      return;
+    }
     final path = await _pathBuilder();
     await _recorder.start(path);
     state = RecordingState(phase: RecordingPhase.recording, path: path);
   }
+
+  /// Requests microphone access ahead of time (welcome screen), without
+  /// starting a recording.
+  Future<bool> requestPermission() => _recorder.hasPermission();
 
   Future<void> pause() async {
     await _recorder.pause();
@@ -46,4 +61,8 @@ class RecordingController extends StateNotifier<RecordingState> {
     state = RecordingState(phase: RecordingPhase.stopped, path: path ?? state.path);
     return state.path;
   }
+
+  Stream<double> amplitude(
+          [Duration interval = const Duration(milliseconds: 100)]) =>
+      _recorder.amplitude(interval);
 }

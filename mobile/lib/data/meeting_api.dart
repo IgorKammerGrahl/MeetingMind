@@ -21,4 +21,11 @@ class MeetingApi {
     final resp = await _dio.get('/meetings/$id');
     return Meeting.fromJson(resp.data as Map<String, dynamic>);
   }
+
+  Future<List<MeetingSummary>> listMeetings() async {
+    final resp = await _dio.get('/meetings');
+    return (resp.data as List)
+        .map((e) => MeetingSummary.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
 }

@@ -29,7 +29,21 @@ func NewMeetingHandler(svc *services.MeetingService, maxUploadMB int64, allowedE
 
 func (h *MeetingHandler) RegisterRoutes(r gin.IRouter) {
 	r.POST("/meetings/upload", h.upload)
+	r.GET("/meetings", h.list)
 	r.GET("/meetings/:id", h.get)
+}
+
+func (h *MeetingHandler) list(c *gin.Context) {
+	ms, err := h.svc.List(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, errorEnvelope("internal_error", "failed to list meetings"))
+		return
+	}
+	items := make([]MeetingListItem, 0, len(ms))
+	for i := range ms {
+		items = append(items, toMeetingListItem(&ms[i]))
+	}
+	c.JSON(http.StatusOK, items)
 }
 
 func (h *MeetingHandler) upload(c *gin.Context) {

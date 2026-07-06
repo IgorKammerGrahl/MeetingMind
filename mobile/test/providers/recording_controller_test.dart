@@ -17,6 +17,9 @@ class FakePort implements RecorderPort {
     stopped = true;
     return '/tmp/rec.m4a';
   }
+
+  @override
+  Stream<double> amplitude(Duration interval) => const Stream.empty();
 }
 
 void main() {
@@ -43,6 +46,7 @@ void main() {
     final c = RecordingController(_DeniedPort(), () async => '/tmp/rec.m4a');
     await c.startRecording();
     expect(c.state.phase, RecordingPhase.idle);
+    expect(c.state.permissionDenied, true);
   });
 }
 
@@ -57,4 +61,6 @@ class _DeniedPort implements RecorderPort {
   Future<void> resume() async {}
   @override
   Future<String?> stop() async => null;
+  @override
+  Stream<double> amplitude(Duration interval) => const Stream.empty();
 }

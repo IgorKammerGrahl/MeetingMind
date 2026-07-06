@@ -7,6 +7,7 @@ import (
 
 type Config struct {
 	OpenAIAPIKey  string
+	OpenAIBaseURL string
 	DatabaseURL   string
 	STTModel      string
 	AnalyzerModel string
@@ -17,7 +18,10 @@ type Config struct {
 
 func Load() Config {
 	return Config{
-		OpenAIAPIKey:  os.Getenv("OPENAI_API_KEY"),
+		OpenAIAPIKey: os.Getenv("OPENAI_API_KEY"),
+		// Any OpenAI-compatible endpoint, e.g. https://api.groq.com/openai/v1.
+		// Empty means api.openai.com.
+		OpenAIBaseURL: os.Getenv("OPENAI_BASE_URL"),
 		DatabaseURL:   os.Getenv("DATABASE_URL"),
 		STTModel:      getenv("STT_MODEL", "whisper-1"),
 		AnalyzerModel: getenv("ANALYZER_MODEL", "gpt-4o-mini"),

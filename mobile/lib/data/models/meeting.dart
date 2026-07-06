@@ -27,6 +27,30 @@ class Meeting {
   }
 }
 
+/// Compact history row from GET /meetings — no knowledge payload.
+class MeetingSummary {
+  final String id;
+  final ProcessingStatus status;
+  final String title;
+  final DateTime createdAt;
+
+  const MeetingSummary({
+    required this.id,
+    required this.status,
+    required this.title,
+    required this.createdAt,
+  });
+
+  factory MeetingSummary.fromJson(Map<String, dynamic> json) {
+    return MeetingSummary(
+      id: json['id'] as String,
+      status: ProcessingStatus.fromString(json['status'] as String),
+      title: json['title'] as String? ?? '',
+      createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
+    );
+  }
+}
+
 class MeetingKnowledge {
   final String title;
   final String summary;

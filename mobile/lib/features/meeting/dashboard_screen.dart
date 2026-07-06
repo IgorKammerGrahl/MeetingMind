@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/quiet_copy.dart';
 import '../../core/theme.dart';
@@ -22,10 +23,13 @@ class DashboardScreen extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: k == null
-            ? const Center(child: Text('No results available.'))
-            : ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        child: Stack(
+          children: [
+            k == null
+                ? Center(
+                    child: Text(QuietCopy.noBrief, style: theme.textTheme.bodyLarge))
+                : ListView(
+                padding: const EdgeInsets.fromLTRB(24, 56, 24, 32),
                 children: [
                   if (k.meetingType.isNotEmpty)
                     Text(k.meetingType, style: theme.extension<QuietTypeExtension>()?.meta),
@@ -65,6 +69,22 @@ class DashboardScreen extends StatelessWidget {
                   ),
                 ],
               ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16, left: 24),
+              child: Text('MeetingMind', style: theme.textTheme.bodyMedium),
+            ),
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8, right: 16),
+                child: TextButton(
+                  onPressed: () => context.push('/history'),
+                  child: const Text(QuietCopy.historyAction),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

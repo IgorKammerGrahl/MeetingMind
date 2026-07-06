@@ -31,7 +31,10 @@ func (c *Client) Transcribe(ctx context.Context, audio io.Reader) (string, error
 	var body bytes.Buffer
 	w := multipart.NewWriter(&body)
 
-	fw, err := w.CreateFormFile("file", "audio")
+	// Groq (and other gateways) validate the extension; the app records m4a.
+	// ponytail: hardcoded ext — thread the real filename through Transcribe if
+	// other upload sources ever appear.
+	fw, err := w.CreateFormFile("file", "audio.m4a")
 	if err != nil {
 		return "", err
 	}

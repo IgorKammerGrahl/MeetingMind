@@ -40,6 +40,15 @@ func (r *memRepo) Get(_ context.Context, id uuid.UUID) (*models.Meeting, error) 
 	cp := *m
 	return &cp, nil
 }
+func (r *memRepo) List(_ context.Context) ([]models.Meeting, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	out := make([]models.Meeting, 0, len(r.m))
+	for _, m := range r.m {
+		out = append(out, *m)
+	}
+	return out, nil
+}
 func (r *memRepo) Update(_ context.Context, m *models.Meeting) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()

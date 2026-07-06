@@ -15,6 +15,8 @@ class _FakePort implements RecorderPort {
   Future<void> resume() async {}
   @override
   Future<String?> stop() async => null;
+  @override
+  Stream<double> amplitude(Duration interval) => const Stream.empty();
 }
 
 void main() {

@@ -10,6 +10,7 @@ import (
 	transcriberopenai "meetingmind/internal/ai/transcriber/openai"
 	"meetingmind/internal/config"
 	"meetingmind/internal/database"
+	"meetingmind/internal/discovery"
 	"meetingmind/internal/handlers"
 	"meetingmind/internal/middleware"
 	"meetingmind/internal/repositories"
@@ -35,8 +36,8 @@ func main() {
 	}
 
 	repo := repositories.NewMeetingRepository(db)
-	tr := transcriberopenai.New(cfg.OpenAIAPIKey, "", cfg.STTModel)
-	an := analyzeropenai.New(cfg.OpenAIAPIKey, "", cfg.AnalyzerModel)
+	tr := transcriberopenai.New(cfg.OpenAIAPIKey, cfg.OpenAIBaseURL, cfg.STTModel)
+	an := analyzeropenai.New(cfg.OpenAIAPIKey, cfg.OpenAIBaseURL, cfg.AnalyzerModel)
 	svc := services.NewMeetingService(repo, store, tr, an)
 
 	allowed := []string{".m4a", ".mp3", ".wav", ".webm", ".mp4", ".aac"}
@@ -46,6 +47,8 @@ func main() {
 	r.Use(middleware.CORS())
 	r.GET("/health", func(c *gin.Context) { c.JSON(200, gin.H{"status": "ok"}) })
 	h.RegisterRoutes(r)
+
+	go discovery.Serve(cfg.Port)
 
 	log.Printf("listening on :%s", cfg.Port)
 	if err := r.Run(":" + cfg.Port); err != nil {

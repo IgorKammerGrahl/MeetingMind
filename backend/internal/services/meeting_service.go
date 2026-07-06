@@ -43,6 +43,11 @@ func NewMeetingService(
 	}
 }
 
+// List returns all meetings, newest first.
+func (s *MeetingService) List(ctx context.Context) ([]models.Meeting, error) {
+	return s.repo.List(ctx)
+}
+
 // Submit stores the audio, persists a meeting in the uploaded state, and
 // dispatches asynchronous processing.
 func (s *MeetingService) Submit(ctx context.Context, filename string, r io.Reader) (*models.Meeting, error) {

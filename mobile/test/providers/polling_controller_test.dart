@@ -18,6 +18,9 @@ class ScriptedRepo implements MeetingRepository {
 
   @override
   Future<String> upload(String filePath, {String filename = 'r.m4a'}) async => 'id';
+
+  @override
+  Future<List<MeetingSummary>> list() async => const [];
 }
 
 void main() {

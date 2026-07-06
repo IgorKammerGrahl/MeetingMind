@@ -5,6 +5,7 @@ import 'models/meeting.dart';
 abstract class MeetingRepository {
   Future<String> upload(String filePath, {String filename});
   Future<Meeting> get(String id);
+  Future<List<MeetingSummary>> list();
 }
 
 class ApiMeetingRepository implements MeetingRepository {
@@ -17,4 +18,7 @@ class ApiMeetingRepository implements MeetingRepository {
 
   @override
   Future<Meeting> get(String id) => _api.getMeeting(id);
+
+  @override
+  Future<List<MeetingSummary>> list() => _api.listMeetings();
 }

@@ -10,9 +10,13 @@ import '../data/meeting_repository.dart';
 import 'polling_controller.dart';
 import 'recording_controller.dart';
 
+/// Overridden at startup in `main.dart` once `resolveApiBaseUrl()` finishes;
+/// defaults to the static fallback so tests and previews still work.
+final apiBaseUrlProvider = Provider<String>((ref) => apiBaseUrl);
+
 final dioProvider = Provider<Dio>((ref) {
   return Dio(BaseOptions(
-    baseUrl: apiBaseUrl,
+    baseUrl: ref.watch(apiBaseUrlProvider),
     connectTimeout: const Duration(seconds: 30),
     receiveTimeout: const Duration(seconds: 30),
   ));
@@ -53,4 +57,10 @@ class RecordAudioRecorder implements RecorderPort {
   Future<void> resume() => _rec.resume();
   @override
   Future<String?> stop() => _rec.stop();
+
+  @override
+  Stream<double> amplitude(Duration interval) => _rec
+      .onAmplitudeChanged(interval)
+      // dBFS: quiet speech ≈ -50, loud ≈ 0. Silence (-inf) clamps to 0.
+      .map((a) => ((a.current + 50) / 50).clamp(0.0, 1.0));
 }
