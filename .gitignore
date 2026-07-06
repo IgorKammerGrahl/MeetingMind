@@ -27,3 +27,6 @@ mobile/ios/Pods/
 # Tooling caches
 .codegraph/
 .serena/
+
+# Superpowers specs/plans
+docs/superpowers/
